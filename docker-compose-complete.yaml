@@ -1,0 +1,51 @@
+
+version: '3.3'
+
+services:
+  web:
+    image: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - type: volume
+        source: myvol
+        target: /app
+        read_only: false
+    configs:
+      - source: nginx.conf
+        target: /etc/nginx/nginx.conf
+        mode: 0440
+        uid: '0'
+        gid: '0'
+    secrets:
+      - source: ssl_key
+        target: /etc/nginx/ssl/key.pem
+        mode: 0440
+        uid: '0'
+        gid: '0'
+
+  db:
+    image: postgres
+    volumes:
+      - type: volume
+        source: myvol
+        target: /var/lib/postgresql/data
+        read_only: false
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  myvol:
+    driver: local
+
+configs:
+  nginx.conf:
+    file: ./nginx.conf
+
+secrets:
+  ssl_key:
+    file: ./ssl/key.pem
