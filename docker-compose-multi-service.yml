@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  frontend:
+    image: newapp
+    ports:
+      - 5000:5000
+    environment:
+      USER: admin
+      PASSWORD: mypassword
+    networks:
+      - mynet
+    volumes:
+      - myvol:/app
+
+  backend:
+    image: postgres:14.1-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - mynet
+    volumes:
+      - db-vol:/var/lib/postgresql/data
+
+networks:
+  mynet: 
+    driver: bridge
+  
+volumes:
+  myvol: {}
+  db-vol: {}
